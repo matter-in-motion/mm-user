@@ -17,9 +17,11 @@ Adds `user` to the settings.
 
 ## API
 
+**User resource controller makes sure all the emails are unique.**
+
 ### get(options)
 
-Returns the user object from the database or false. This also removes `status` if status equals `active` i.e. normal active user.
+Returns the user object from the database or trows `UserNotFound` error with code **4541**. This also removes `status` if status equals `active` i.e. normal active user.
 
 `options`:
 
@@ -61,46 +63,30 @@ Options:
 
 **Did hooks** will get full user object with id
 
-## Authentication
+### update(opts, to)
 
-There are at least two authentication extensions for a user:
+Updates the user properties and returns updated user id
 
-* **[mm-user-auth-password](https://github.com/matter-in-motion/mm-user-auth-password)** — just a simple well-known password authentication. This  extension provides all methods you need for password authentication, password recovery etc.
-* **[mm-user-auth-email](https://github.com/matter-in-motion/mm-user-auth-email)** — passwordless method:
-  - user enters email
-  - your app sends a token to users email
-  - user clicks on the link inside email
-  - token in the link sends
-  - Done!
+`options`:
+* **id** — string, returns user by `id`
+* **email** — string, returns user by `email`
+
+**Will hooks** will get all the arguments
+
+**Did hooks** will get changes object with `new_val` and `old_val` properties
+
+### delete(opts)
+
+Deletes the user and returns deleted user id.
+
+`options`:
+* **id** — string, returns user by `id`
+* **email** — string, returns user by `email`
+
+**Will hooks** will get all the arguments
+
+**Did hooks** will get changes object with `new_val` and `old_val` properties
 
 License MIT;
 
 © velocityzen
-
-
-
-
-# password
-willCreate — hashes the password
-didCreate — sends email confirmation if needed
-
-authenticate
-  match the user's hash with password
-
-change
-  optional email notification
-reset
-  email reset token
-  validate token
-  get new password with a token
-
-# email
-- willCreate
-- didCreate
-
-authenticate
-  if no token send token
-  if login token ok return authentification token
-
-
-
