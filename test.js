@@ -61,12 +61,25 @@ test.serial('fails to get inactive user', t => user
     email: 'test@test.com',
     status: 'active'
   })
-  .then(user => t.false(user))
+  .then(() => t.fail())
+  .catch(e => t.is(e.code, 4541))
 );
 
 test.serial('updates user status', t => user
   .update({ email: 'test@test.com' }, { status: 'active' })
   .then(id => t.regex(id, rxUUID))
+);
+
+test.serial('fails to update not existed user', t => user
+  .update({ email: 'unknown@test.com' }, { some: 'update' })
+  .then(() => t.fail())
+  .catch(e => t.is(e.code, 4541))
+);
+
+test.serial('fails to delete not existed user', t => user
+  .delete({ email: 'unknown@test.com' })
+  .then(() => t.fail())
+  .catch(e => t.is(e.code, 4541))
 );
 
 test.serial('gets a user by email then gets it by id', t => user

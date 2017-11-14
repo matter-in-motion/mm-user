@@ -2,6 +2,15 @@
 const hooks = require('async-hooks');
 const errors = require('mm-errors');
 
+const UserNotFound = errors.Error(4541, 'User not found');
+const userNotFound = function(e) {
+  if (e !== false && e.msg !== 'Index out of bounds: 0') {
+    throw e;
+  }
+
+  throw UserNotFound();
+}
+
 const Controller = function() {
   hooks(this)
     .will('create')
@@ -33,7 +42,14 @@ Controller.prototype.__init = function(units) {
 Controller.prototype.get = function(opts) {
   return this._get(opts)
     .default(false)
-    .run();
+    .run()
+    .then(res => {
+      if (res === false) {
+        throw UserNotFound();
+      }
+
+      return res;
+    })
 };
 
 Controller.prototype._get = function(opts) {
@@ -137,6 +153,7 @@ Controller.prototype.update = function(opts, to) {
       .update(to, { returnChanges: true })('changes').nth(0)
       .run()
     )
+    .catch(userNotFound);
 };
 
 Controller.prototype.didUpdate = function(changes) {
@@ -151,6 +168,7 @@ Controller.prototype.delete = function(opts) {
       .deleteUnique(changes.old_val.email)
       .then(() => changes)
     )
+    .catch(userNotFound);
 };
 
 Controller.prototype.didDelete = function(changes) {
