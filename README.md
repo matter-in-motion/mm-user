@@ -13,7 +13,7 @@ This extension adds a __user__ resource.
 
 Adds `user` to the settings.
 
-* new — object, properties that will be added to the newly created user. If `status` not present it will be equal `created`;
+* new — object, properties that will be added to the newly created user. If `status` not present it will be set to `created`;
 
 ## API
 
@@ -23,7 +23,7 @@ Returns authenticated user profile
 
 **Request**
 
-null
+`null`
 
 **Response**
 
@@ -65,7 +65,7 @@ Deletes authenticated user
 
 **Request**
 
-null
+`null`
 
 **Response**
 
