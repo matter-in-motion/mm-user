@@ -17,18 +17,77 @@ Adds `user` to the settings.
 
 ## API
 
+### user.get
+
+Returns authenticated user profile
+
+**Request**
+
+null
+
+**Response**
+
+* user data with at least two properties `id` and `email`
+* `Unauthorized` error, code 4100 — when no user authenticated
+* `NotFound` error, code 4540 — when user not found
+
+### user.create
+
+Creates a new user
+
+**Request**
+
+* **email** — string, user's email
+* name — string, user's name
+
+**Response**
+
+* user id
+
+### user.update
+
+Updates authenticated user properties
+
+**Request**
+
+* **to** — object
+  - name — string, user's name
+  - email — string, user's email
+
+**Response**
+
+* user id
+* `Unauthorized` error, code 4100 — when no user authenticated
+
+### user.delete
+
+Deletes authenticated user
+
+**Request**
+
+null
+
+**Response**
+
+* user id
+* `Unauthorized` error, code 4100 — when no user authenticated
+* `NotFound` error, code 4540 — when user not found
+
+
+## Controller methods
+
 **User resource controller makes sure all the emails are unique.**
 
 ### get(options)
 
-Returns the user object from the database or trows `UserNotFound` error with code **4541**. This also removes `status` if status equals `active` i.e. normal active user.
+Returns the user object from the database or throws `NotFound` error with code **4540**. This also removes `status` if status equals `active` i.e. normal active user.
 
 `options`:
 
 * **id** — string, returns user by `id`
 * **email** — string, returns user by `email`
-* status — string, returns only user with status
-* auth — boolean, default fasle, returns user without auth records
+* status — string, returns the only user with status
+* auth — boolean, default false, returns user without auth records
 
 ### _get(options)
 
@@ -36,7 +95,7 @@ The same as `get` but returns a rethinkdb query promise
 
 ### __get(options)
 
-Returns rethinkdb query promise with single user selected by `id` or `email`. No other filtering or transformations perfomed.
+Returns rethinkdb query promise with single user selected by `id` or `email`. No other filtering or transformations performed.
 
 ### getAll(options)
 
@@ -53,11 +112,11 @@ The same as `getAll` but returns a rethinkdb query promise
 
 ### create(data, options)
 
-Creates new user and returns a new user id.
+Creates a new user and returns a new user id.
 
 Options:
 
-* status — string, status to create new user with.
+* status — string, status to create a new user with.
 
 **Will hooks** will get user object with all new user data applied
 

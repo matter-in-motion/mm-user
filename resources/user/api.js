@@ -79,7 +79,6 @@ module.exports = {
       call: (auth, data) => this
         .create(data)
         .catch(ReqlDriverError)
-        .catch(errors.BadRequest)
     }
   },
 
@@ -98,9 +97,12 @@ module.exports = {
         properties: {
           to: {
             type: 'object',
-            required: [ 'name' ],
             additionalProperties: false,
             properties: {
+              email: {
+                type: 'string',
+                format: 'email'
+              },
               name: types.name()
             }
           }
@@ -115,7 +117,6 @@ module.exports = {
       call: (auth, data) => this
         .update({ id: auth.id }, data.to)
         .catch(ReqlDriverError)
-        .catch(errors.BadRequest)
     }
   },
 

@@ -1,14 +1,12 @@
 'use strict';
 const hooks = require('async-hooks');
 const errors = require('mm-errors');
-
-const UserNotFound = errors.Error(4541, 'User not found');
 const userNotFound = function(e) {
-  if (e !== false && e.msg !== 'Index out of bounds: 0') {
-    throw e;
+  if (e.msg === 'Not found') {
+    throw errors.NotFound();
   }
 
-  throw UserNotFound();
+  throw e;
 }
 
 const Controller = function() {
@@ -41,18 +39,12 @@ Controller.prototype.__init = function(units) {
 
 Controller.prototype.get = function(opts) {
   return this._get(opts)
-    .default(false)
     .run()
-    .then(res => {
-      if (res === false) {
-        throw UserNotFound();
-      }
-
-      return res;
-    })
+    .catch(userNotFound);
 };
 
 Controller.prototype._get = function(opts) {
+  const r = this.r;
   let q = this.__get(opts);
 
   if (!opts.auth) {
@@ -63,7 +55,7 @@ Controller.prototype._get = function(opts) {
     q = q.do(user => this.r.branch(
       user('status').eq(opts.status),
       user,
-      null
+      r.error('Not found')
     ));
   }
 
@@ -76,14 +68,17 @@ Controller.prototype._get = function(opts) {
 };
 
 Controller.prototype.__get = function(opts) {
-  let q = this.r.table(this.table);
+  const r = this.r;
+  const q = r.table(this.table);
 
   if (opts.id) {
-    return q.get(opts.id);
+    return q.get(opts.id)
+      .default(r.error('Not found'));
   }
 
   if (opts.email) {
-    return q.getAll(opts.email, { index: 'email' }).nth(0);
+    return q.getAll(opts.email, { index: 'email' }).nth(0)
+      .default(r.error('Not found'));
   }
 };
 
@@ -150,10 +145,11 @@ Controller.prototype.update = function(opts, to) {
       }
     })
     .then(() => this.__get(opts)
-      .update(to, { returnChanges: true })('changes').nth(0)
+      .update(to, { returnChanges: true })('changes')
       .run()
     )
-    .catch(userNotFound);
+    .catch(userNotFound)
+    .then(changes => changes[0]);
 };
 
 Controller.prototype.didUpdate = function(changes) {
