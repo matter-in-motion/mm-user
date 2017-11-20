@@ -35,6 +35,7 @@ const app = createApp({
 const user = app.units.require('resources.user.controller');
 
 test.before(() => app.run('db', 'updateSchema'));
+test.after.always(() => app.run('db', 'dropSchema'));
 
 test.serial('creates a user', t => user
   .create({
@@ -176,6 +177,3 @@ test.serial('deletes user with command', t => app
   .run('user', 'delete', 'cmd@test.com')
   .then(msg => t.regex(msg, /^Deleted user/))
 );
-
-
-test.after.always(() => app.run('db', 'dropSchema'));
