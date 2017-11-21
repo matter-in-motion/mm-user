@@ -1,5 +1,5 @@
 'use strict';
-const user = require('./resources/user/units');
+const user = require('./resources/user');
 const commands = require('./commands');
 
 module.exports = {
