@@ -1,7 +1,7 @@
 'use strict';
 const hooks = require('async-hooks');
 const errors = require('mm-errors');
-const userNotFound = function(e) {
+const notFound = function(e) {
   if (e.msg === 'Not found') {
     throw errors.NotFound();
   }
@@ -40,7 +40,7 @@ Controller.prototype.__init = function(units) {
 Controller.prototype.get = function(opts) {
   return this._get(opts)
     .run()
-    .catch(userNotFound);
+    .catch(notFound);
 };
 
 Controller.prototype._get = function(opts) {
@@ -106,7 +106,7 @@ Controller.prototype._getAll = function(opts = {}) {
 
 Controller.prototype.willCreate = function(user, opts = {}) {
   if (user.id) {
-    throw new Error('New user data has forbidden property id');
+    throw new Error('New user data has a forbidden property id');
   }
 
   Object.assign(user, { status: 'created' }, this.settings.new);
@@ -148,7 +148,7 @@ Controller.prototype.update = function(opts, to) {
       .update(to, { returnChanges: true })('changes')
       .run()
     )
-    .catch(userNotFound)
+    .catch(notFound)
     .then(changes => changes[0]);
 };
 
@@ -164,7 +164,7 @@ Controller.prototype.delete = function(opts) {
       .deleteUnique(changes.old_val.email)
       .then(() => changes)
     )
-    .catch(userNotFound);
+    .catch(notFound);
 };
 
 Controller.prototype.didDelete = function(changes) {
