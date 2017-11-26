@@ -1,13 +1,20 @@
 # Matter In Motion. User resource extension
 
-[![NPM Version](https://img.shields.io/npm/v/mm-mail.svg?style=flat-square)](https://www.npmjs.com/package/mm-mail)
-[![NPM Downloads](https://img.shields.io/npm/dt/mm-mail.svg?style=flat-square)](https://www.npmjs.com/package/mm-mail)
+[![NPM Version](https://img.shields.io/npm/v/mm-user.svg?style=flat-square)](https://www.npmjs.com/package/mm-user)
+[![NPM Downloads](https://img.shields.io/npm/dt/mm-user.svg?style=flat-square)](https://www.npmjs.com/package/mm-user)
 
 This extension adds a __user__ resource.
 
 ## Usage
 
 [Extensions installation instructions](https://github.com/matter-in-motion/mm/blob/master/docs/extensions.md)
+
+## Dependencies
+
+* __[rethinkdb](https://github.com/matter-in-motion/mm-rethinkdb)__
+* __[rethinkdb-unique](https://github.com/matter-in-motion/mm-rethinkdb-unique)__
+* [db-schema](https://github.com/matter-in-motion/mm-db-schema)
+* [rethinkdb-schema](https://github.com/matter-in-motion/mm-rethinkdb-schema)
 
 ## Settings
 

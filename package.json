@@ -28,6 +28,7 @@
     "mm-http": "^1.0.0",
     "mm-rethinkdb": "^1.0.0",
     "mm-rethinkdb-schema": "^1.0.0",
+    "mm-rethinkdb-unique": "^1.0.0",
     "mm-test": "^1.0.0",
     "nyc": "^11.3.0"
   },

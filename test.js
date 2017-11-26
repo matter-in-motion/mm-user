@@ -10,6 +10,7 @@ const app = createApp({
   extensions: [
     'http',
     'rethinkdb',
+    'rethinkdb-unique',
     'rethinkdb-schema',
     'db-schema',
     extension
@@ -54,7 +55,7 @@ test.serial('fails to create a user with the same email', t => user
 test.serial('fails to create a user with id', t => user
   .create({ id: 'test@test.com' })
   .then(() => t.fail())
-  .catch(err => t.is(err.message, 'New user data has forbidden property id'))
+  .catch(err => t.is(err.message, 'New user data has a forbidden property id'))
 );
 
 test.serial('fails to get inactive user', t => user

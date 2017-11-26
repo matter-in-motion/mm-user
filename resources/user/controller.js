@@ -1,13 +1,6 @@
 'use strict';
 const hooks = require('async-hooks');
 const errors = require('mm-errors');
-const notFound = function(e) {
-  if (e.msg === 'Not found') {
-    throw errors.NotFound();
-  }
-
-  throw e;
-}
 
 const Controller = function() {
   hooks(this)
@@ -31,6 +24,7 @@ Controller.prototype.schema = {
 
 Controller.prototype.__init = function(units) {
   this.r = units.require('db.rethinkdb');
+  this.unique = units.require('db.rethinkdb.unique');
   this.settings = units.require('core.settings').user || {};
 
   this.table = this.schema.user.table;
@@ -40,7 +34,7 @@ Controller.prototype.__init = function(units) {
 Controller.prototype.get = function(opts) {
   return this._get(opts)
     .run()
-    .catch(notFound);
+    .catch(this.notFound);
 };
 
 Controller.prototype._get = function(opts) {
@@ -119,8 +113,7 @@ Controller.prototype.willCreate = function(user, opts = {}) {
 Controller.prototype.create = function(user) {
   user.created = Date.now();
 
-  return this
-    .ensureUnique(user.email)
+  return this.unique.ensure(this.emails, user.email)
     .then(() => this.r.table(this.table)
       .insert(user)
       .run()
@@ -141,14 +134,14 @@ Controller.prototype.update = function(opts, to) {
       if (to.email) {
         return this.__get(opts)('email')
           .run()
-          .then(email => this.renameUnique(email, to.email));
+          .then(email => this.unique.rename(this.emails, email, to.email));
       }
     })
     .then(() => this.__get(opts)
       .update(to, { returnChanges: true })('changes')
       .run()
     )
-    .catch(notFound)
+    .catch(this.notFound)
     .then(changes => changes[0]);
 };
 
@@ -160,49 +153,23 @@ Controller.prototype.delete = function(opts) {
   return this.__get(opts)
     .delete({ returnChanges: true })('changes').nth(0)
     .run()
-    .then(changes => this
-      .deleteUnique(changes.old_val.email)
+    .then(changes => this.unique
+      .delete(this.emails, changes.old_val.email)
       .then(() => changes)
     )
-    .catch(notFound);
+    .catch(this.notFound);
 };
 
 Controller.prototype.didDelete = function(changes) {
   return changes.old_val.id;
 };
 
-Controller.prototype.ensureUnique = function(email) {
-  return this.r.table(this.emails)
-    .insert({ id: email })
-    .run()
-    .then(res => {
-      if (res && res.errors && res.errors > 0) {
-        const message = res.first_error;
-        if (/Duplicate primary key/.test(message)) {
-          throw errors.Duplicate();
-        }
+Controller.prototype.notFound = function(e) {
+  if (e.msg === 'Not found') {
+    throw errors.NotFound();
+  }
 
-        const e = new Error(message);
-        e.errors = res.errors;
-        throw e;
-      }
-
-      return res;
-    });
-};
-
-Controller.prototype.deleteUnique = function(email) {
-  return this.r.table(this.emails)
-    .get(email)
-    .delete()
-    .run();
-};
-
-Controller.prototype.renameUnique = function(oldEmail, newEmail) {
-  return this
-    .ensureUnique(newEmail)
-    .then(() => this.deleteUnique(oldEmail))
-    .then(() => newEmail);
-};
+  throw e;
+}
 
 module.exports = Controller;
