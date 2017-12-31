@@ -45,7 +45,7 @@ module.exports = {
       call: auth => this
         .get({ id: auth.id })
         .catch(ReqlDriverError)
-        .catch(errors.NotFound)
+        .catch(errors.ifError('NotFound'))
     }
   },
 
@@ -79,6 +79,7 @@ module.exports = {
       call: (auth, data) => this
         .create(data)
         .catch(ReqlDriverError)
+        .catch(errors.ifError('BadRequest'))
     }
   },
 
@@ -117,6 +118,7 @@ module.exports = {
       call: (auth, data) => this
         .update({ id: auth.id }, data.to)
         .catch(ReqlDriverError)
+        .catch(errors.ifError('BadRequest'))
     }
   },
 
@@ -140,7 +142,7 @@ module.exports = {
       call: auth => this
         .delete({ id: auth.id })
         .catch(ReqlDriverError)
-        .catch(errors.NotFound)
+        .catch(errors.ifError('NotFound'))
     }
   }
 };

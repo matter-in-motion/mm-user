@@ -35,6 +35,7 @@ Returns authenticated user profile
 **Response**
 
 * user data with at least two properties `id` and `email`
+
 * `Unauthorized` error, code 4100 — when no user authenticated
 * `NotFound` error, code 4540 — when user not found
 
@@ -64,6 +65,7 @@ Updates authenticated user properties
 **Response**
 
 * user id
+
 * `Unauthorized` error, code 4100 — when no user authenticated
 
 ### user.delete
@@ -77,6 +79,7 @@ Deletes authenticated user
 **Response**
 
 * user id
+
 * `Unauthorized` error, code 4100 — when no user authenticated
 * `NotFound` error, code 4540 — when user not found
 
@@ -154,5 +157,3 @@ Deletes the user and returns deleted user id.
 **Did hooks** will get changes object with `new_val` and `old_val` properties
 
 License MIT;
-
-© velocityzen
