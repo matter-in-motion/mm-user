@@ -20,13 +20,13 @@ This extension adds a __user__ resource.
 
 Adds `user` to the settings.
 
-* new — object, properties that will be added to the newly created user. If `status` not present it will be set to `created`;
+* new — object, properties to add to the newly created user. Status is 'created' if omitted;
 
 ## API
 
 ### user.get
 
-Returns authenticated user profile
+Returns authenticated user profile.
 
 **Request**
 
@@ -34,7 +34,7 @@ Returns authenticated user profile
 
 **Response**
 
-* user data with at least two properties `id` and `email`
+* user data with at least two properties `id` and `email`.
 
 * `Unauthorized` error, code 4100 — when no user authenticated
 * `NotFound` error, code 4540 — when user not found
@@ -54,7 +54,7 @@ Creates a new user
 
 ### user.update
 
-Updates authenticated user properties
+Updates authenticated user properties.
 
 **Request**
 
@@ -66,11 +66,11 @@ Updates authenticated user properties
 
 * user id
 
-* `Unauthorized` error, code 4100 — when no user authenticated
+* `Unauthorized` error, code 4100 — when no user authenticated.
 
 ### user.delete
 
-Deletes authenticated user
+Deletes authenticated user.
 
 **Request**
 
@@ -80,8 +80,8 @@ Deletes authenticated user
 
 * user id
 
-* `Unauthorized` error, code 4100 — when no user authenticated
-* `NotFound` error, code 4540 — when user not found
+* `Unauthorized` error, code 4100 — when no user authenticated.
+* `NotFound` error, code 4540 — when user not found.
 
 
 ## Controller methods
@@ -90,14 +90,14 @@ Deletes authenticated user
 
 ### get(options)
 
-Returns the user object from the database or throws `NotFound` error with code **4540**. This also removes `status` if status equals `active` i.e. normal active user.
+Returns the user object from the database or throws `NotFound` error with code **4540**. Removes `status` property from returned user data if status equals `active`, i.e. active user.
 
 `options`:
 
-* **id** — string, returns user by `id`
-* **email** — string, returns user by `email`
-* status — string, returns the only user with status
-* auth — boolean, default false, returns user without auth records
+* **id** — string, returns user by `id`.
+* **email** — string, returns user by `email`.
+* status — string, returns the only user with status.
+* auth — boolean, default false, returns user without auth records.
 
 ### _get(options)
 
@@ -105,7 +105,7 @@ The same as `get` but returns a rethinkdb query promise
 
 ### __get(options)
 
-Returns rethinkdb query promise with single user selected by `id` or `email`. No other filtering or transformations performed.
+Returns rethinkdb query promise with a single user selected by `id` or `email`. No other filtering or transformations performed.
 
 ### getAll(options)
 
@@ -118,7 +118,7 @@ returns list or count of users.
 
 ### _getAll(options)
 
-The same as `getAll` but returns a rethinkdb query promise
+The same as `getAll` but returns a rethinkdb query promise.
 
 ### create(data, options)
 
@@ -128,21 +128,21 @@ Options:
 
 * status — string, status to create a new user with.
 
-**Will hooks** will get user object with all new user data applied
+**Will hooks** get user object with all new user data applied.
 
-**Did hooks** will get full user object with id
+**Did hooks** get full user object with id.
 
 ### update(opts, to)
 
-Updates the user properties and returns updated user id
+Updates the user properties and returns updated user id.
 
 `options`:
-* **id** — string, returns user by `id`
-* **email** — string, returns user by `email`
+* **id** — string, returns user by `id`.
+* **email** — string, returns user by `email`.
 
-**Will hooks** will get all the arguments
+**Will hooks** get all the arguments.
 
-**Did hooks** will get changes object with `new_val` and `old_val` properties
+**Did hooks** get changes object with `new_val` and `old_val` properties.
 
 ### delete(opts)
 
@@ -152,8 +152,8 @@ Deletes the user and returns deleted user id.
 * **id** — string, returns user by `id`
 * **email** — string, returns user by `email`
 
-**Will hooks** will get all the arguments
+**Will hooks** get all the arguments
 
-**Did hooks** will get changes object with `new_val` and `old_val` properties
+**Did hooks** get changes object with `new_val` and `old_val` properties
 
 License MIT;
